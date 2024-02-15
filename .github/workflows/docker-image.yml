@@ -18,7 +18,7 @@ jobs:
       run: docker build . --file Dockerfile --tag spitharepo/burrow:latest
     
     - name: Login dockerhub
-      uses: docker/lognin-action/@v1
+      uses: docker/lognin-action@v1
       with:
         username: ${{secrets.DOCKERHUB_USERNAME}}
         password: ${{secrets.DOCKERHUB_TOKEN}}
