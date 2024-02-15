@@ -1,11 +1,11 @@
 name: Release
 
-on:
-  push:
-    branches-ignore:
-      - '**'
-    tags:
-      - 'v*.*.*'
+on: [push]
+  # push:
+  #   branches-ignore:
+  #     - '**'
+  #   tags:
+  #     - 'v*.*.*'
 
 jobs:
   test:
