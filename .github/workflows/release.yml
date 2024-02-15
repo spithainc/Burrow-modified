@@ -40,3 +40,23 @@ jobs:
         args: release --rm-dist
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  
+  docker_build_and_push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Login dockerhub
+      uses: docker/lognin-action/@v1
+      with:
+        username: ${{secrets.DOCKERHUB_USERNAME}}
+        password: ${{secrets.DOCKERHUB_TOKEN}}
+    
+    - name: Build and push
+      env:
+        REPO: spitharepo
+        TARGET: burrow
+      run: |
+        DOCKER_BUILDKIT=1 docker build -t $REPO/$TARGET:latest -f Dockerfile .
+        docker push $REPO/$TARGET:latest
+
