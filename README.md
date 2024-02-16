@@ -1,5 +1,5 @@
 # Burrow - Kafka Consumer Lag Checking (Forked and modified by spitha)
-> The original repository [Burrow](https://github.com/linkedin/Burrow)
+> You can find the original 'README' at [Burrow](https://github.com/linkedin/Burrow).
 
 ## Modifications
 * Remove Notifier and Zookeeper - do not need `Notifier` and `Zookeeper` settings
