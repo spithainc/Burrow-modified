@@ -15,6 +15,6 @@ FROM alpine:3.18
 LABEL maintainer="LinkedIn Burrow https://github.com/linkedin/Burrow"
 
 COPY --from=builder /tmp/burrow /app/
-COPY docker-config/burrow.toml /etc/burrow/
+COPY docker-config/burrow.yaml /etc/burrow/
 
 CMD ["/app/burrow", "--config-dir", "/etc/burrow"]

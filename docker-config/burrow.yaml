@@ -1,0 +1,24 @@
+client-profile:
+  profile:
+    kafka-version: 0.11.0
+    client-id: docker-client
+cluster:
+  local:
+    client-profile: profile
+    class-name: kafka
+    servers:
+      - 'kafka:9092'
+    topic-refresh: 60
+    offset-refresh: 30
+    groups-reaper-refresh: 30
+consumer:
+  local:
+    class-name: kafka
+    cluster: local
+    servers:
+      - 'kafka:9092'
+    group-denylist: ^(console-consumer-|python-kafka-consumer-).*$
+    group-allowlist: ''
+httpserver:
+  default:
+    address: ':8000'
