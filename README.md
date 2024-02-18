@@ -6,48 +6,6 @@
 * Fix SASL Bug: set `sasl.handshake-first` to `true`
 * Add SASL Mechanisms: PLAIN, OAUTHBEARER, GSSAPI
 
-### SASL Configuration Examples in yaml format
-- PLAIN
-```
-sasl:
-  my-kafka:
-    mechanism: PLAIN
-    username: client
-    password: client-secret
-```
-
-- SCRAM
-```
-  sasl:
-    my-kafka:
-      mechanism: SCRAM-SHA-512
-      username: client
-      password: client-secret
-```
-
-- OAUTHBEARER
-```
-sasl:
-  my-kafka:
-    mechanism: OAUTHBEARER
-    clientId: client
-    clientSecret: client-secret
-    tokenEndpoint:  http://.../realms/my-kafka/protocol/openid-connect/token
-```
-
-- GSSAPI
-```
-sasl:
-  my-kafka:
-    mechanism: GSSAPI
-    servicename: kafka
-    realm: mydomain.com
-    username: client
-    keytabPath: keytab/client.keytab
-    kerberosConfigPath: /etc/krb5.conf
-    disablePAFXFAST: fasle
-```
-
 ## Getting Started
 ### Quick Start
 * Our docker image is available through the Docker Hub repository. You can run a burrow in a few simple steps.
@@ -98,6 +56,48 @@ Install [Docker Compose](https://docs.docker.com/compose/) and then:
 
 ### Configuration
 For information on how to write your configuration file, check out the [detailed wiki](https://github.com/linkedin/Burrow/wiki)
+
+### Additional configuration examples for the newly added SASL mechanism in yaml format
+- PLAIN
+```
+sasl:
+  my-kafka:
+    mechanism: PLAIN
+    username: client
+    password: client-secret
+```
+
+- SCRAM
+```
+  sasl:
+    my-kafka:
+      mechanism: SCRAM-SHA-512
+      username: client
+      password: client-secret
+```
+
+- OAUTHBEARER
+```
+sasl:
+  my-kafka:
+    mechanism: OAUTHBEARER
+    clientId: client
+    clientSecret: client-secret
+    tokenEndpoint:  http://.../realms/my-kafka/protocol/openid-connect/token
+```
+
+- GSSAPI
+```
+sasl:
+  my-kafka:
+    mechanism: GSSAPI
+    servicename: kafka
+    realm: mydomain.com
+    username: client
+    keytabPath: keytab/client.keytab
+    kerberosConfigPath: /etc/krb5.conf
+    disablePAFXFAST: fasle
+```
 
 ## License
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
