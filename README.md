@@ -4,9 +4,9 @@
 ## Modifications
 * Remove Notifier and Zookeeper - do not need `Notifier` and `Zookeeper` settings
 * Fix SASL Bug: set `sasl.handshake-first` to `true`
-* Add Auth Mechanisms: PLAIN, OAUTHBEARER, GSSAPI
+* Add SASL Mechanisms: PLAIN, OAUTHBEARER, GSSAPI
 
-### Auth Configuration Examples in yaml format
+### SASL Configuration Examples in yaml format
 - PLAIN
 ```
 sasl:
