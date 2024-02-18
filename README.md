@@ -3,6 +3,50 @@
 
 ## Modifications
 * Remove Notifier and Zookeeper - do not need `Notifier` and `Zookeeper` settings
+* Fix SASL Bug: set `sasl.handshake-first` to `true`
+* Add Auth Mechanisms: PLAIN, OAUTHBEARER, GSSAPI
+
+### Auth Configuration Examples in yaml format
+- PLAIN
+```
+sasl:
+  my-kafka:
+    mechanism: PLAIN
+    username: client
+    password: client-secret
+```
+
+- SCRAM
+```
+  sasl:
+    my-kafka:
+      mechanism: SCRAM-SHA-512
+      username: client
+      password: client-secret
+```
+
+- OAUTHBEARER
+```
+sasl:
+  my-kafka:
+    mechanism: OAUTHBEARER
+    clientId: client
+    clientSecret: client-secret
+    tokenEndpoint:  http://.../realms/my-kafka/protocol/openid-connect/token
+```
+
+- GSSAPI
+```
+sasl:
+  my-kafka:
+    mechanism: GSSAPI
+    servicename: kafka
+    realm: mydomain.com
+    username: client
+    keytabPath: keytab/client.keytab
+    kerberosConfigPath: /etc/krb5.conf
+    disablePAFXFAST: fasle
+```
 
 ## Getting Started
 ### Quick Start
