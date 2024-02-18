@@ -118,20 +118,49 @@ func GetSaramaConfigFromClientProfile(profileName string) *sarama.Config {
 
 		saramaConfig.Net.SASL.Enable = true
 		mechanism := viper.GetString("sasl." + saslName + ".mechanism")
-		if mechanism == "SCRAM-SHA-256" {
-			saramaConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
-			saramaConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
-				return &XDGSCRAMClient{HashGeneratorFcn: SHA256}
-			}
-		} else if mechanism == "SCRAM-SHA-512" {
-			saramaConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
-			saramaConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
-				return &XDGSCRAMClient{HashGeneratorFcn: SHA512}
-			}
-		}
+		// BUGFIX by SPITHA : default value of handshake-first option
+		viper.SetDefault("sasl." + saslName + ".handshake-first", true)	// fix SASL Auth fail
 		saramaConfig.Net.SASL.Handshake = viper.GetBool("sasl." + saslName + ".handshake-first")
-		saramaConfig.Net.SASL.User = viper.GetString("sasl." + saslName + ".username")
-		saramaConfig.Net.SASL.Password = viper.GetString("sasl." + saslName + ".password")
+
+		// ADD MECHANISMS by SPITHA
+		switch mechanism {
+		case "SCRAM-SHA-256", "SCRAM-SHA-512", "PLAIN":
+			saramaConfig.Net.SASL.User = viper.GetString("sasl." + saslName + ".username")
+			saramaConfig.Net.SASL.Password = viper.GetString("sasl." + saslName + ".password")
+			if mechanism == "SCRAM-SHA-256" {
+				saramaConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA256
+				saramaConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
+					return &XDGSCRAMClient{HashGeneratorFcn: SHA256}
+				}
+			} else if mechanism == "SCRAM-SHA-512" {
+				saramaConfig.Net.SASL.Mechanism = sarama.SASLTypeSCRAMSHA512
+				saramaConfig.Net.SASL.SCRAMClientGeneratorFunc = func() sarama.SCRAMClient {
+					return &XDGSCRAMClient{HashGeneratorFcn: SHA512}
+				}
+			} else if mechanism == "PLAIN" {
+				// SASL/PLAIN by SPITHA
+				saramaConfig.Net.SASL.Mechanism = sarama.SASLTypePlaintext
+			}
+		case "OAUTHBEARER":
+			// SASL/OAUTH by SPITHA
+			saramaConfig.Net.SASL.Mechanism = sarama.SASLTypeOAuth
+			clientID := viper.GetString("sasl." + saslName + ".clientId")
+			clientSecret := viper.GetString("sasl." + saslName + ".clientSecret")
+			tokenEndpoint := viper.GetString("sasl." + saslName + ".tokenEndpoint")
+			saramaConfig.Net.SASL.TokenProvider = newOAuthTokenProvider(clientID, clientSecret, tokenEndpoint)
+		case "GSSAPI":
+			// SASL/GSSAPI by SPITHA
+			viper.SetDefault("sasl." + saslName + ".kerberosConfigPath", "/etc/krb5.conf")
+			viper.SetDefault("sasl." + saslName + ".disablePAFXFAST", false)
+			saramaConfig.Net.SASL.Mechanism = sarama.SASLTypeGSSAPI
+			saramaConfig.Net.SASL.GSSAPI.ServiceName = viper.GetString("sasl." + saslName + ".servicename")
+			saramaConfig.Net.SASL.GSSAPI.Realm = viper.GetString("sasl." + saslName + ".realm")
+			saramaConfig.Net.SASL.GSSAPI.Username = viper.GetString("sasl." + saslName + ".username")
+			saramaConfig.Net.SASL.GSSAPI.AuthType = sarama.KRB5_KEYTAB_AUTH
+			saramaConfig.Net.SASL.GSSAPI.KeyTabPath = viper.GetString("sasl." + saslName + ".keytabPath")
+			saramaConfig.Net.SASL.GSSAPI.KerberosConfigPath = viper.GetString("sasl." + saslName + ".kerberosConfigPath")
+			saramaConfig.Net.SASL.GSSAPI.DisablePAFXFAST = viper.GetBool("sasl." + saslName + ".disablePAFXFAST")
+		}
 	}
 
 	// Timeout for the initial connection
