@@ -20,6 +20,7 @@ package core
 import (
 	"os"
 
+	"github.com/spf13/viper"
 	"go.uber.org/zap"
 
 	"github.com/linkedin/Burrow/core/internal/cluster"
@@ -27,22 +28,32 @@ import (
 	"github.com/linkedin/Burrow/core/internal/evaluator"
 	"github.com/linkedin/Burrow/core/internal/helpers"
 	"github.com/linkedin/Burrow/core/internal/httpserver"
-	// "github.com/linkedin/Burrow/core/internal/notifier"
+	"github.com/linkedin/Burrow/core/internal/notifier"
 	"github.com/linkedin/Burrow/core/internal/storage"
-	// "github.com/linkedin/Burrow/core/internal/zookeeper"
+	"github.com/linkedin/Burrow/core/internal/zookeeper"
 	"github.com/linkedin/Burrow/core/protocol"
 )
 
 func newCoordinators(app *protocol.ApplicationContext) []protocol.Coordinator {
 	// This order is important - it makes sure that the things taking requests start up before things sending requests
-	return []protocol.Coordinator{
-		// &zookeeper.Coordinator{
-		// 	App: app,
-		// 	Log: app.Logger.With(
-		// 		zap.String("type", "coordinator"),
-		// 		zap.String("name", "zookeeper"),
-		// 	),
-		// },
+	var coordinators []protocol.Coordinator
+
+	haveNotifiers := viper.IsSet("notifier")
+
+	// Only include zookeeper if we have dependant coordinators
+	if haveNotifiers {
+		coordinators = append(coordinators,
+			&zookeeper.Coordinator{
+				App: app,
+				Log: app.Logger.With(
+					zap.String("type", "coordinator"),
+					zap.String("name", "zookeeper"),
+				),
+			},
+		)
+	}
+
+	coordinators = append(coordinators,
 		&storage.Coordinator{
 			App: app,
 			Log: app.Logger.With(
@@ -64,13 +75,21 @@ func newCoordinators(app *protocol.ApplicationContext) []protocol.Coordinator {
 				zap.String("name", "httpserver"),
 			),
 		},
-		// &notifier.Coordinator{
-		// 	App: app,
-		// 	Log: app.Logger.With(
-		// 		zap.String("type", "coordinator"),
-		// 		zap.String("name", "notifier"),
-		// 	),
-		// },
+	)
+
+	if haveNotifiers {
+		coordinators = append(coordinators,
+			&notifier.Coordinator{
+				App: app,
+				Log: app.Logger.With(
+					zap.String("type", "coordinator"),
+					zap.String("name", "notifier"),
+				),
+			},
+		)
+	}
+
+	coordinators = append(coordinators,
 		&cluster.Coordinator{
 			App: app,
 			Log: app.Logger.With(
@@ -85,7 +104,9 @@ func newCoordinators(app *protocol.ApplicationContext) []protocol.Coordinator {
 				zap.String("name", "consumer"),
 			),
 		},
-	}
+	)
+
+	return coordinators
 }
 
 func configureCoordinators(app *protocol.ApplicationContext, coordinators []protocol.Coordinator) { // nolint:gocritic

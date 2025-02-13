@@ -32,11 +32,11 @@ func (hc *Coordinator) configMain(w http.ResponseWriter, r *http.Request, _ http
 		UseCompression: viper.GetBool("logging.use-compression"),
 		Level:          viper.GetString("logging.level"),
 	}
-	// configZookeeper := httpResponseConfigZookeeper{
-	// 	Servers:  viper.GetStringSlice("zookeeper.servers"),
-	// 	Timeout:  viper.GetInt("zookeeper.timeout"),
-	// 	RootPath: viper.GetString("zookeeper.root-path"),
-	// }
+	configZookeeper := httpResponseConfigZookeeper{
+		Servers:  viper.GetStringSlice("zookeeper.servers"),
+		Timeout:  viper.GetInt("zookeeper.timeout"),
+		RootPath: viper.GetString("zookeeper.root-path"),
+	}
 
 	servers := viper.GetStringMap("httpserver")
 	configHTTPServer := make(map[string]httpResponseConfigHTTPServer)
@@ -55,7 +55,7 @@ func (hc *Coordinator) configMain(w http.ResponseWriter, r *http.Request, _ http
 		Message:    "main config returned",
 		General:    configGeneral,
 		Logging:    configLogging,
-		// Zookeeper:  configZookeeper,
+		Zookeeper:  configZookeeper,
 		HTTPServer: configHTTPServer,
 		Request:    requestInfo,
 	})

@@ -134,7 +134,7 @@ type httpResponseConfigMain struct {
 	Request    httpResponseRequestInfo                 `json:"request"`
 	General    httpResponseConfigGeneral               `json:"general"`
 	Logging    httpResponseConfigLogging               `json:"logging"`
-	// Zookeeper  httpResponseConfigZookeeper             `json:"zookeeper"`
+	Zookeeper  httpResponseConfigZookeeper             `json:"zookeeper"`
 	HTTPServer map[string]httpResponseConfigHTTPServer `json:"httpserver"`
 }
 

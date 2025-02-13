@@ -150,8 +150,8 @@ func (hc *Coordinator) Configure() {
 	hc.router.GET("/v3/config/cluster/:cluster", hc.handleClusterDetail)
 	hc.router.GET("/v3/config/consumer", hc.configConsumerList)
 	hc.router.GET("/v3/config/consumer/:name", hc.configConsumerDetail)
-	// hc.router.GET("/v3/config/notifier", hc.configNotifierList)
-	// hc.router.GET("/v3/config/notifier/:name", hc.configNotifierDetail)
+	hc.router.GET("/v3/config/notifier", hc.configNotifierList)
+	hc.router.GET("/v3/config/notifier/:name", hc.configNotifierDetail)
 
 	// TODO: This should really have authentication protecting it
 	hc.router.DELETE("/v3/kafka/:cluster/consumer/:consumer", hc.handleConsumerDelete)
